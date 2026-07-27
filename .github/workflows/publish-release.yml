@@ -1,0 +1,155 @@
+name: Verify and publish monomers
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+
+env:
+  SOURCE_JSON: data/monomers.json
+  SOURCE_SCHEMA: schema/monomers.schema.json
+  GENERATED_JSON: build/monomers.json
+  GENERATED_CSV: build/monomers.csv
+  GENERATED_TSV: build/monomers.tsv
+  GENERATED_SDF: build/monomers.sdf
+  DATASETS_REPOSITORY: ProteinQure/monomer-database-datasets
+
+jobs:
+  test-monomers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the source release
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || github.ref }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: "0.11.32"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Validate release tag
+        if: github.event_name == 'release'
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Release tag must match vMAJOR.MINOR.PATCH with an optional SemVer suffix." >&2
+            exit 1
+          fi
+
+      - name: Test, convert, and verify
+        run: |
+          uv run --python 3.12 scripts/run_tests.py
+          mkdir -p build
+          install -m 0644 "$SOURCE_JSON" "$GENERATED_JSON"
+          uv run --python 3.12 scripts/convert.py --output-type csv "$SOURCE_JSON" "$GENERATED_CSV"
+          uv run --python 3.12 scripts/convert.py --output-type tsv "$SOURCE_JSON" "$GENERATED_TSV"
+          uv run --python 3.12 scripts/convert.py --output-type sdf "$SOURCE_JSON" "$GENERATED_SDF"
+          cmp "$SOURCE_JSON" "$GENERATED_JSON"
+          uv run --python 3.12 scripts/verify.py "$GENERATED_JSON" "$GENERATED_CSV"
+          uv run --python 3.12 scripts/verify.py "$GENERATED_JSON" "$GENERATED_TSV"
+          uv run --python 3.12 scripts/verify.py "$GENERATED_JSON" "$GENERATED_SDF"
+
+      - name: Save generated monomers
+        if: github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-monomers
+          path: |
+            build/monomers.json
+            build/monomers.csv
+            build/monomers.tsv
+            build/monomers.sdf
+          if-no-files-found: error
+
+  publish-data:
+    if: github.event_name == 'release'
+    needs: test-monomers
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    concurrency:
+      group: publish-monomer-database
+      cancel-in-progress: false
+    steps:
+      - name: Check out the source release
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: "0.11.32"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Download generated monomers
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-monomers
+          path: build
+
+      - name: Check out the datasets repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DATASETS_REPOSITORY }}
+          ref: main
+          path: generated-data
+          fetch-depth: 0
+          ssh-key: ${{ secrets.DATASETS_DEPLOY_KEY }}
+
+      - name: Install and verify generated formats
+        run: |
+          mkdir -p generated-data/data
+          install -m 0644 "$GENERATED_JSON" generated-data/data/monomers.json
+          install -m 0644 "$SOURCE_SCHEMA" generated-data/data/monomers.schema.json
+          install -m 0644 "$GENERATED_CSV" generated-data/data/monomers.csv
+          install -m 0644 "$GENERATED_TSV" generated-data/data/monomers.tsv
+          install -m 0644 "$GENERATED_SDF" generated-data/data/monomers.sdf
+          cmp "$SOURCE_JSON" generated-data/data/monomers.json
+          uv run --python 3.12 scripts/verify.py generated-data/data/monomers.json generated-data/data/monomers.csv
+          uv run --python 3.12 scripts/verify.py generated-data/data/monomers.json generated-data/data/monomers.tsv
+          uv run --python 3.12 scripts/verify.py generated-data/data/monomers.json generated-data/data/monomers.sdf
+          uv run --python 3.12 scripts/validate_schema.py generated-data/data/monomers.json generated-data/data/monomers.schema.json
+          (
+            cd generated-data/data
+            sha256sum monomers.json monomers.csv monomers.tsv monomers.sdf monomers.schema.json > SHA256SUMS
+            sha256sum --check SHA256SUMS
+          )
+
+      - name: Commit, tag, and push generated formats
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        working-directory: generated-data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/monomers.json data/monomers.csv data/monomers.tsv data/monomers.sdf data/monomers.schema.json data/SHA256SUMS
+          if git diff --cached --quiet; then
+            echo "Published data already matches release ${RELEASE_TAG}."
+          else
+            git commit -m "Publish dataset ${RELEASE_TAG}"
+          fi
+          if git rev-parse --verify --quiet "refs/tags/${RELEASE_TAG}"; then
+            echo "Datasets tag ${RELEASE_TAG} already exists."
+          else
+            git tag -a "$RELEASE_TAG" -m "Monomer database ${RELEASE_TAG}"
+          fi
+          git push origin HEAD:main "refs/tags/${RELEASE_TAG}"
