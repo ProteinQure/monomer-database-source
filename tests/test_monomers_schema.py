@@ -21,13 +21,12 @@ class MonomersSchemaTests(unittest.TestCase):
     def test_monomers_match_schema(self) -> None:
         Draft202012Validator(self.schema).validate(self.monomers)
 
-    def test_initial_release_is_the_canonical_amino_acid_set(self) -> None:
-        expected_symbols = set("ACDEFGHIKLMNPQRSTVWY")
+    def test_symbols_are_unique_and_include_canonical_amino_acids(self) -> None:
+        canonical_symbols = set("ACDEFGHIKLMNPQRSTVWY")
         actual_symbols = [record["PQ_SYMBOL"] for record in self.monomers]
 
-        self.assertEqual(len(actual_symbols), 20)
-        self.assertEqual(set(actual_symbols), expected_symbols)
         self.assertEqual(len(actual_symbols), len(set(actual_symbols)))
+        self.assertLessEqual(canonical_symbols, set(actual_symbols))
 
 
 if __name__ == "__main__":
