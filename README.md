@@ -1,5 +1,7 @@
 # Monomer database source
 
+A curated, openly-licensed database of 2,400+ peptide monomers — canonical and non-canonical amino-acid backbones (α/β/γ/δ/ε), N-/C-terminal caps, and side-chain modifications — with physicochemical properties (MW, cLogP, tPSA), usage/availability signals, and structure identifiers (SMILES, InChIKey), for peptide and macrocycle design.
+
 This repository is the editable source of truth and build tooling for the
 ProteinQure monomer database. Data changes belong in
 [`data/monomers.json`](data/monomers.json). Output formats are generated and
