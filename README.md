@@ -12,6 +12,10 @@ ProteinQure monomer database. Data changes belong in
 [`data/monomers.json`](data/monomers.json). Output formats are generated and
 must not be edited by hand.
 
+## Interactive Monomer Explorer UI
+
+The Peptide Monomer Database can be interactively browsed, explored and searched via the free [Monomer Explorer](https://monomers.proteinqure.com/) hosted by [ProteinQure](https://proteinqure.com). Search the database by name, SMILES, or even a partially remembered name, and retrieve the nearest neighbours of any monomer ranked by Tanimoto similarity. The Chemical Exploration view maps the space around a selected monomer across four regions; close analogues, potential activity cliffs, putative scaffold hops, and the far edge of the space.
+
 ## Repository roles
 
 | Repository | Responsibility | Accepts changes? |
