@@ -82,12 +82,23 @@ The exact maintainer setup and release procedure are in
 
 ## Citation and licenses
 
+When using version `v1.0.0`, cite the archived dataset:
+
+> ProteinQure. (2026). *Monomer database datasets* (Version v1.0.0)
+> [Dataset]. Zenodo.
+> https://doi.org/10.5281/zenodo.21684534
+
+For another version, use the citation and version-specific DOI on its Zenodo
+record. GitHub-readable citation metadata is provided in
+[`CITATION.cff`](https://github.com/ProteinQure/monomer-database-datasets/blob/main/CITATION.cff) in the [`monomer-database-datasets`](https://github.com/ProteinQure/monomer-database-datasets)
+repository but the authoritative data source is this [`monomer-database-source`](https://github.com/ProteinQure/monomer-database-source) repository.
+
 The data, schema, and documentation are licensed under
 [Creative Commons Attribution-ShareAlike 4.0 International](LICENSE-DATA). Executable
 code, tests, and automation are licensed under the
 [GNU Affero General Public License v3.0 or later](LICENSE-CODE). `LICENSE-DATA`
 contains a second copy of the data license for explicit downstream reuse.
 The requested attribution name is **ProteinQure**.
-
-ProteinQure is the organizational creator in the repository's active citation
-and Zenodo metadata.
+Repository-side Zenodo and GitHub citation metadata are described in
+[ZENODO.md](https://github.com/ProteinQure/monomer-database-datasets/blob/main/ZENODO.md) in the [`monomer-database-datasets`](https://github.com/ProteinQure/monomer-database-datasets)
+repository.
