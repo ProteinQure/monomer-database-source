@@ -2,7 +2,8 @@
 [![Release](https://img.shields.io/github/v/release/ProteinQure/monomer-database-source?label=release&color=f5995b)](https://github.com/ProteinQure/monomer-database-source/releases/latest)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21684533-1682D4)](https://doi.org/10.5281/zenodo.21684533)
 ![Monomers](https://img.shields.io/badge/monomers-2488-2e6e8e)
-[![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/deed.en)
+[![Data: CC BY-SA 4.0](https://img.shields.io/badge/data-CC%20BY--SA%204.0-lightgrey.svg)](LICENSE-DATA)
+[![Code: AGPL v3](https://img.shields.io/badge/code-AGPL%20v3-lightgrey.svg)](LICENSE-CODE)
 
 The Peptide Monomer Database is a curated, openly licensed resource for peptide and macrocycle design. 2,488 chemically standardized canonical and non-canonical monomers spanning α/β/γ/δ/ε backbones plus N- and C-terminal caps, with SMILES, InChIKeys, systematic IUPAC names, natural-analogue mapping, computed physicochemical properties (MW, cLogP, tPSA), and commercial-availability signals. Each entry carries a ProteinQure-derived HELM-style monomer shorthand.
 
