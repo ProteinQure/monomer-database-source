@@ -5,16 +5,16 @@
 [![Data: CC BY-SA 4.0](https://img.shields.io/badge/data-CC%20BY--SA%204.0-lightgrey.svg)](LICENSE-DATA)
 [![Code: AGPL v3](https://img.shields.io/badge/code-AGPL%20v3-lightgrey.svg)](LICENSE-CODE)
 
-The Peptide Monomer Database is a curated, openly licensed resource for peptide and macrocycle design. 2,488 chemically standardized canonical and non-canonical monomers spanning α/β/γ/δ/ε backbones plus N- and C-terminal caps, with SMILES, InChIKeys, systematic IUPAC names, natural-analogue mapping, computed physicochemical properties (MW, cLogP, tPSA), and commercial-availability signals. Each entry carries a ProteinQure-derived HELM-style monomer shorthand.
+The Monomer Database is a curated, openly licensed resource for peptide and macrocycle design. 2,488 chemically standardized canonical and non-canonical monomers spanning α/β/γ/δ/ε backbones plus N- and C-terminal caps, with SMILES, InChIKeys, systematic IUPAC names, natural-analogue mapping, computed physicochemical properties (MW, cLogP, tPSA), and commercial-availability signals. Each entry carries a ProteinQure-derived HELM-style monomer shorthand.
 
-This repository is the editable source of truth and build tooling for the
-ProteinQure monomer database. Data changes belong in
+**This repository is the editable source of truth and build tooling for the
+ProteinQure monomer database.** Data changes belong in
 [`data/monomers.json`](data/monomers.json). Output formats are generated and
 must not be edited by hand.
 
 ## Interactive Monomer Explorer UI
 
-The Peptide Monomer Database can be interactively browsed, explored and searched via the free [Monomer Explorer](https://monomers.proteinqure.com/) hosted by [ProteinQure](https://proteinqure.com). Search the database by name, SMILES, or even a partially remembered name, and retrieve the nearest neighbours of any monomer ranked by Tanimoto similarity. The Chemical Exploration view maps the space around a selected monomer across four regions; close analogues, potential activity cliffs, putative scaffold hops, and the far edge of the space.
+The Monomer Database can be interactively browsed, explored and searched via the free [Monomer Explorer](https://monomers.proteinqure.com/) hosted by [ProteinQure](https://proteinqure.com). Search the database by name, SMILES, or even a partially remembered name, and retrieve the nearest neighbours of any monomer ranked by Tanimoto similarity. The Chemical Exploration view maps the space around a selected monomer across four regions; close analogues, potential activity cliffs, putative scaffold hops, and the far edge of the space.
 
 ## Repository roles
 
