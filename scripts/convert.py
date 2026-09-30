@@ -117,7 +117,7 @@ def write_sdf(records: list[dict[str, Any]], output_path: Path) -> None:
         if molecule is None:
             raise ValueError(f"{record_name} has an invalid SMILES value")
 
-        rdDepictor.Compute2DCoords(molecule, canonOrient=True)
+        rdDepictor.Compute2DCoords(molecule, canonOrient=True, useRingTemplates=True)
         title = str(symbol or "")
         molecule.SetProp("_Name", title)
         molecule.SetProp("rName", title)
